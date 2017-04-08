@@ -5,8 +5,8 @@
   <version>1</version>
 	
   <build>
-    <directory>/home/git/spring</directory>
-    <outputDirectory>/home/git/spring</outputDirectory>
+    <directory>/home/git/spring/deploy</directory>
+    <outputDirectory>/home/git/spring/deploy</outputDirectory>
     <finalName>Hi.java</finalName>
   </build>
 
