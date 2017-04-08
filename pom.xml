@@ -5,9 +5,12 @@
   <version>1</version>
 	
   <build>
+     <sourceDirectory>/home/git/spring/appsrc</sourceDirectory>
+     <testSourceDirectory>/home/git/spring/apptestsrc</testSourceDirectory>
+     <outputDirectory>/home/git/spring</outputDirectory>
+     <testOutputDirectory>/home/git/spring</testOutputDirectory>
     <directory>/home/git/spring/deploy</directory>
-    <outputDirectory>/home/git/spring/deploy</outputDirectory>
-    <finalName>Hi.java</finalName>
+    <finalName>Hi</finalName>
   </build>
 
 </project>
