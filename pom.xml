@@ -11,7 +11,7 @@
      <testOutputDirectory>/home/git/proj/apptestclass</testOutputDirectory>
     <directory>/home/git/proj/deploy</directory>
     <finalName>Hi</finalName>
-  </build>
+  
 	
   <plugins>
 	<plugin>
@@ -24,5 +24,6 @@
     		</configuration>
        </plugin>
  </plugins>
+</build>
 
 </project>
