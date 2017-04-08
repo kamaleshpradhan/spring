@@ -1,0 +1,13 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>home</groupId>
+  <artifactId>Hi</artifactId>
+  <version>1</version>
+	
+  <build>
+    <directory>/home/git/spring</directory>
+    <outputDirectory>/home/git/spring</outputDirectory>
+    <finalName>Hi.java</finalName>
+  </build>
+
+</project>
