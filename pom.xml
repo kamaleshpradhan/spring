@@ -5,11 +5,11 @@
   <version>1</version>
 	
   <build>
-     <sourceDirectory>/home/git/spring/appsrc</sourceDirectory>
-     <testSourceDirectory>/home/git/spring/apptestsrc</testSourceDirectory>
-     <outputDirectory>/home/git/spring</outputDirectory>
-     <testOutputDirectory>/home/git/spring</testOutputDirectory>
-    <directory>/home/git/spring/deploy</directory>
+     <sourceDirectory>/home/git/proj/appsrc</sourceDirectory>
+     <testSourceDirectory>/home/git/proj/apptestsrc</testSourceDirectory>
+     <outputDirectory>/home/git/proj/appclass</outputDirectory>
+     <testOutputDirectory>/home/git/proj/apptestclass</testOutputDirectory>
+    <directory>/home/git/proj/deploy</directory>
     <finalName>Hi</finalName>
   </build>
 
