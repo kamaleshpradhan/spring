@@ -21,3 +21,11 @@ COMM.COMM_MEDIUM_CD IS NOT NULL AND
 TIER.NAME='Red' AND
 to_date(to_char(START_DT,'DD-MON-YYYY'),'DD-MON-YYYY')>'31-DEC-2014' AND
 ROWNUM<"
+
+#Any active accounts <18 Yrs age
+"select mem.mem_num,to_char(con.birth_dt,'dd-mon-yy') from siebel.s_contact con, siebel.s_loy_member mem"+
+" where"+
+" con.row_id=mem.pr_con_id and"+
+" con.birth_dt IS NOT NULL and"+
+" TRUNC(months_between(to_date(to_char(sysdate,'dd-mm-yyyy'),'dd-mm-yyyy'),to_date(to_Char(con.birth_dt,'dd-mm-yyyy'),'dd-mm-yyyy'))/12)<18 and"+
+" rownum<"
