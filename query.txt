@@ -29,3 +29,197 @@ ROWNUM<"
 " con.birth_dt IS NOT NULL and"+
 " TRUNC(months_between(to_date(to_char(sysdate,'dd-mm-yyyy'),'dd-mm-yyyy'),to_date(to_Char(con.birth_dt,'dd-mm-yyyy'),'dd-mm-yyyy'))/12)<18 and"+
 " rownum<"
+
+#Any active accounts without email address
+
+SELECT mem_num,fst_name,last_name,decode(NULL,NULL,'N')AS EMAIL FROM
+(SELECT mem.mem_num,con.fst_name,con.last_name
+FROM siebel.s_loy_member mem,siebel.s_contact con
+WHERE pr_con_id 
+IN (SELECT row_id 
+FROM (SELECT row_id 
+FROM siebel.s_contact
+MINUS SELECT DISTINCT per_id 
+FROM siebel.s_per_comm_addr))
+AND mem.pr_con_id=con.row_id
+AND upper(mem.status_cd)='ACTIVE'
+ORDER BY DBMS_RANDOM.RANDOM) 
+WHERE ROWNUM<=5;
+
+#Any accounts without SQA
+
+SELECT mem_num,SQA_FLG FROM
+(SELECT mem.mem_num,decode(conx.attrib_57,NULL,'N') AS SQA_FLG 
+FROM siebel.s_contact_x conx, siebel.s_loy_member mem 
+WHERE conx.row_id=mem.pr_con_id
+AND conx.attrib_57 IS NULL
+AND conx.attrib_58 IS NULL
+AND upper(mem.status_cd)='ACTIVE'
+ORDER BY DBMS_RANDOM.RANDOM)
+WHERE ROWNUM<=2;
+
+#Any accounts without SQA and Email
+
+SELECT mem_num,fst_name,last_name,decode(NULL,NULL,'N')AS EMAIL, decode(NULL,NULL,'N') AS SQA_FLG FROM
+(SELECT mem.mem_num,con.fst_name,con.last_name
+FROM siebel.s_loy_member mem,siebel.s_contact con,siebel.s_contact_x conx
+WHERE pr_con_id 
+IN (SELECT row_id 
+FROM (SELECT row_id 
+FROM siebel.s_contact
+MINUS SELECT DISTINCT per_id 
+FROM siebel.s_per_comm_addr))
+AND mem.pr_con_id=con.row_id
+AND mem.pr_con_id=conx.row_id
+AND conx.attrib_57 IS NULL
+AND conx.attrib_58 IS NULL
+AND upper(mem.status_cd)='ACTIVE'
+ORDER BY DBMS_RANDOM.RANDOM) 
+WHERE ROWNUM<=5;
+
+#Any acounts having SEC - VCCU|VACRD|AMEX|AMEXUK|AMEXC
+
+SELECT mem_num,sec FROM
+(SELECT mem_num,sec.x_status_enh_cd AS SEC
+FROM siebel.s_loy_member mem, siebel.S_LOY_MEMPTRPG sec 
+WHERE mem.row_id=sec.member_id 
+AND mem.status_cd='Active' 
+AND sec.x_status_enh_cd='VACRD'--,VCCU,AMXCUK,AMEXC,AMEX'
+ORDER BY DBMS_RANDOM.RANDOM)
+WHERE ROWNUM<=2;
+
+#Any accounts having lots of miles
+
+SELECT mem_num,TIER,MILES FROM
+(SELECT mem_num,decode(tier.tier_id,'1-1XWL','Red','1-2KO8','Silver','1-2KOC','Gold') AS TIER,mem.point_type_a_val AS MILES
+FROM siebel.s_loy_member mem, siebel.s_contact con,siebel.s_loy_mem_tier tier 
+WHERE mem.pr_con_id=con.row_id 
+AND mem.row_id=tier.member_id
+AND upper(mem.status_cd)='ACTIVE' 
+AND mem.point_type_a_val>100000
+ORDER BY DBMS_RANDOM.RANDOM)
+WHERE ROWNUM<=2;
+
+#Any Million Miler accounts
+
+SELECT mem_num,fst_name,last_name,TIER,STAT,MM_FLG FROM
+(SELECT MEM.MEM_NUM,CON.FST_NAME,CON.LAST_NAME,TIER.NAME AS TIER,MEM.STATUS_CD AS STAT,MEM.X_MILL_MILER_FLG AS MM_FLG
+FROM SIEBEL.S_CONTACT CON,
+SIEBEL.S_LOY_MEMBER MEM,
+SIEBEL.S_LOY_TIER TIER,
+SIEBEL.S_PER_COMM_ADDR COMM,
+SIEBEL.S_LOY_MEMBER_X MEM_X
+WHERE CON.ROW_ID=MEM.PR_CON_ID 
+AND MEM.PR_DOM_TIER_ID=TIER.ROW_ID 
+AND MEM.PR_CON_ID=COMM.PER_ID 
+AND MEM.ROW_ID=MEM_X.PAR_ROW_ID 
+AND MEM.X_MEM_LOCK_FLG='N' 
+AND MEM.STATUS_CD='Active'
+AND COMM.X_VALID_FLG='Y'
+AND COMM.COMM_MEDIUM_CD='Email'
+AND COMM.COMM_MEDIUM_CD IS NOT NULL
+AND MEM.X_MILL_MILER_FLG='Y'
+ORDER BY DBMS_RANDOM.RANDOM)
+WHERE ROWNUM<=10;
+
+#Any LTG accounts
+
+SELECT mem_num,fst_name,last_name,TIER,STAT,LTG_FLG FROM
+(SELECT MEM.MEM_NUM,CON.FST_NAME,CON.LAST_NAME,TIER.NAME AS TIER,MEM.STATUS_CD AS STAT,MEM.X_LFT_TME_FLG AS LTG_FLG
+FROM SIEBEL.S_CONTACT CON,
+SIEBEL.S_LOY_MEMBER MEM,
+SIEBEL.S_LOY_TIER TIER,
+SIEBEL.S_PER_COMM_ADDR COMM,
+SIEBEL.S_LOY_MEMBER_X MEM_X
+WHERE CON.ROW_ID=MEM.PR_CON_ID 
+AND MEM.PR_DOM_TIER_ID=TIER.ROW_ID 
+AND MEM.PR_CON_ID=COMM.PER_ID 
+AND MEM.ROW_ID=MEM_X.PAR_ROW_ID 
+AND MEM.X_MEM_LOCK_FLG='N' 
+AND MEM.STATUS_CD='Active'
+AND COMM.X_VALID_FLG='Y'
+AND COMM.COMM_MEDIUM_CD='Email'
+AND COMM.COMM_MEDIUM_CD IS NOT NULL
+AND MEM.X_LFT_TME_FLG='Y'
+ORDER BY DBMS_RANDOM.RANDOM)
+WHERE ROWNUM<=10;
+
+#Any Top accounts
+
+SELECT mem_num,fst_name,last_name,TIER,STAT,TOP_FLG FROM
+(SELECT MEM.MEM_NUM,CON.FST_NAME,CON.LAST_NAME,TIER.NAME AS TIER,MEM.STATUS_CD AS STAT,MEM_X.ATTRIB_09 AS TOP_FLG
+FROM SIEBEL.S_CONTACT CON,
+SIEBEL.S_LOY_MEMBER MEM,
+SIEBEL.S_LOY_TIER TIER,
+SIEBEL.S_PER_COMM_ADDR COMM,
+SIEBEL.S_LOY_MEMBER_X MEM_X
+WHERE CON.ROW_ID=MEM.PR_CON_ID 
+AND MEM.PR_DOM_TIER_ID=TIER.ROW_ID 
+AND MEM.PR_CON_ID=COMM.PER_ID 
+AND MEM.ROW_ID=MEM_X.PAR_ROW_ID 
+AND MEM.X_MEM_LOCK_FLG='N' 
+AND MEM.STATUS_CD='Active'
+AND COMM.X_VALID_FLG='Y'
+AND COMM.COMM_MEDIUM_CD='Email'
+AND COMM.COMM_MEDIUM_CD IS NOT NULL
+AND MEM_X.ATTRIB_09='Y'
+ORDER BY DBMS_RANDOM.RANDOM)
+WHERE ROWNUM<=10;
+
+#Any Locked accounts
+
+SELECT mem_num,fst_name,last_name,TIER,STAT,LCKD_FLG FROM
+(SELECT MEM.MEM_NUM,CON.FST_NAME,CON.LAST_NAME,TIER.NAME AS TIER,MEM.STATUS_CD AS STAT,MEM.X_MEM_LOCK_FLG AS LCKD_FLG
+FROM SIEBEL.S_CONTACT CON,
+SIEBEL.S_LOY_MEMBER MEM,
+SIEBEL.S_LOY_TIER TIER,
+SIEBEL.S_PER_COMM_ADDR COMM,
+SIEBEL.S_LOY_MEMBER_X MEM_X
+WHERE CON.ROW_ID=MEM.PR_CON_ID 
+AND MEM.PR_DOM_TIER_ID=TIER.ROW_ID 
+AND MEM.PR_CON_ID=COMM.PER_ID 
+AND MEM.ROW_ID=MEM_X.PAR_ROW_ID 
+AND MEM.X_MEM_LOCK_FLG='Y' 
+AND MEM.STATUS_CD='Active'
+AND COMM.X_VALID_FLG='Y'
+AND COMM.COMM_MEDIUM_CD='Email'
+AND COMM.COMM_MEDIUM_CD IS NOT NULL
+ORDER BY DBMS_RANDOM.RANDOM)
+WHERE ROWNUM<=10;
+
+#Any Flying Co accounts
+
+SELECT mem_num,ACCT_NAME,STAT FROM
+(SELECT mem.mem_num,con.fst_name AS ACCT_NAME,mem.status_cd AS STAT FROM siebel.s_contact con,siebel.s_loy_member mem
+WHERE con.row_id=mem.pr_con_id
+AND upper(mem.status_cd)='ACTIVE'
+AND upper(con.con_cd)='MEMBER'
+AND upper(mem.mem_type_cd)='ACCOUNT'
+ORDER BY DBMS_RANDOM.RANDOM)
+WHERE ROWNUM<=2;
+
+#Any accounts having different status
+
+SELECT mem_num,fst_name,last_name,TIER,STAT FROM
+(SELECT MEM.MEM_NUM,CON.FST_NAME,CON.LAST_NAME,TIER.NAME AS TIER,MEM.STATUS_CD AS STAT
+FROM SIEBEL.S_CONTACT CON,
+SIEBEL.S_LOY_MEMBER MEM,
+SIEBEL.S_LOY_TIER TIER,
+SIEBEL.S_PER_COMM_ADDR COMM,
+SIEBEL.S_LOY_MEMBER_X MEM_X
+WHERE CON.ROW_ID=MEM.PR_CON_ID 
+AND MEM.PR_DOM_TIER_ID=TIER.ROW_ID 
+AND MEM.PR_CON_ID=COMM.PER_ID 
+AND MEM.ROW_ID=MEM_X.PAR_ROW_ID 
+AND MEM.X_MEM_LOCK_FLG='N' 
+AND upper(MEM.STATUS_CD)='ACTIVE'--|Active Pending|Inactive|Frozen|Route Deal|Suspended|Expired|Cancelled|Merged|Deceased|Dummy|Fraud|'
+AND COMM.X_VALID_FLG='Y'
+AND COMM.COMM_MEDIUM_CD='Email'
+AND COMM.COMM_MEDIUM_CD IS NOT NULL
+ORDER BY DBMS_RANDOM.RANDOM)
+WHERE ROWNUM<=10;
+
+
+
+
+
