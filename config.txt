@@ -1,3 +1,15 @@
 #Define DB connection string
 #username:password:connectionname:hostname:port#:servicename
 constrng=hr:hr123:ORCL:127.0.0.1:1521:orcl
+
+#Define DB connection string
+#username:password:connectionname:hostname:port#:servicename
+constrng=hr:hr1234:ORCL:127.0.0.1:1521:orcl
+#Define connection type - SID or Service
+contyp=SID
+#Define number of rows to be retrieve from Tables/Views if available
+fetch_sz=10
+#Specify SEC type -  VACRD|VCCU|AMXCUK|AMEXC|AMEX
+sec=VACRD
+#Specify Account Status - |Active Pending|Inactive|Frozen|Route Deal|Suspended|Expired|Cancelled|Merged|Deceased|Dummy|Fraud|'
+stat=FRAUD
