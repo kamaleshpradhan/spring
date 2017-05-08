@@ -219,6 +219,16 @@ AND COMM.COMM_MEDIUM_CD IS NOT NULL
 ORDER BY DBMS_RANDOM.RANDOM)
 WHERE ROWNUM<=10;
 
+#Any FC accounts having miles expiry Date>sysdate
+
+select mem_num,expiry_dt,tier.name as TR from siebel.s_loy_member mem,siebel.s_loy_mem_tier memtier,siebel.s_loy_tier tier 
+where to_char(expiry_dt,'dd-mon-yy')>sysdate
+and mem.row_id=memtier.member_id
+and memtier.tier_id=tier.row_id
+and tier.name='Red'
+and rownum<10
+--order by dbms_random.value
+
 
 
 
